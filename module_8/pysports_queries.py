@@ -12,22 +12,15 @@ config = {
 try:
     db = mysql.connector.connect(**config)
 
-
-    print("\n   Database user   {}  connected to MySQL on host {}   with database   {}".format(config["user"], config["host"], config["database"]))
+    cursor = db.cursor()
+    cursor.execute("SELECT player_id, first_name, last_name, team_name FROM player INNER JOIN team ON player.team_id = team.team_id")
+    teams = cursor.fetchall()
+    print ("-- DISPLAYING PLAYER RECORDS --")
+    for team in teams:
+        print ("Player ID: {}\nFirst Name: {}\nLast Name: {}\nTeam Name: {}\n".format(team[0], team[1], team[2], team[3]))
 
     input("\n\n Press any key to continue...")
 
-    cursor = db.cursor()
-    cursor.execute("SELECT team_id, team_name, mascot FROM team")
-    teams = cursor.fetchall()
-    for team in teams:
-        print ("-- DISPLAYING TEAM RECORDS --\nTeam ID: {}\nTeam Name: {}\nMascot: {}\n".format(team[0], team[1], team[2]))
-
-
-    cursor.execute("SELECT player_id, first_name, last_name, team_id FROM player")
-    players = cursor.fetchall()
-    for player in players:
-        print("--DISPLAYING PLAYER RECORDS --\nPlayer ID: {}\nFirst Name: {}\nLast Name: {}\nTeam ID: {}".format(player[0], player[1], player[2], player[3]))
 
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
